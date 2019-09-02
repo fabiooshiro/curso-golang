@@ -11,10 +11,10 @@ type Car struct {
 	Year int
 }
 
-func Loja(name string, tempo int, canal chan *Car) {
+func Loja(name string, tempo int, canal <-chan *Car) {
 	go func() {
 		for {
-			time.Sleep(time.Millisecond * time.Duration(tempo))
+			time.Sleep(time.Millisecond * time.Duration(rand.Intn(tempo)))
 			i := <-canal
 			fmt.Printf("Vendido %s ano %d na loja %s, %d carros no patio\n", i.Name, i.Year, name, len(canal))
 		}
@@ -31,7 +31,7 @@ func main() {
 		i := 0
 		for {
 			i++
-			r := rand.Intn(300)
+			r := rand.Intn(150)
 			modelName := models[rand.Intn(len(models))]
 			time.Sleep(time.Millisecond * time.Duration(r))
 			c <- &Car{Name: modelName, Year: 1950 + i}
@@ -40,6 +40,6 @@ func main() {
 
 	// consumidor
 	Loja("A", 300, c)
-	Loja("B", 369, c)
+	Loja("B", 300, c)
 	time.Sleep(time.Second * 10)
 }
